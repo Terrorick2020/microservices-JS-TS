@@ -15,7 +15,7 @@ import {
   HOST,
   PREFIX,
   isDev
-} from './config/main.config'
+} from './env/main.env'
 
 
 const start = async () => {

@@ -1,14 +1,13 @@
-import { Request, Response, NextFunction } from 'express'
-import { isDev } from '../env/main.env'
+import { isDev } from '../env/main.config'
 
 
-export const notFound = ( req: Request, res: Response, next: NextFunction ) => {
+export const notFound = ( req, res, next ) => {
     const err = new Error( `Not found - ${ req.originalUrl }` )
     res.status( 404 )
     next( err )
 }
 
-export const errorHandler = ( err: Error, _req: Request, res: Response, _next: NextFunction ) => {
+export const errorHandler = ( err, _req, res, _next ) => {
     const statusCode = res.statusCode === 200 ? 500: res.statusCode
     res
         .status( statusCode )
