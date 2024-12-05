@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Products {
+  id        Int      @id               @default( autoincrement() )
+  createdAt DateTime @default( now() ) @map( "created_at" )
+  updatedAt DateTime @updatedAt        @map( "updated_at" )
+
+  plu       String   @unique
+  name      String
+
+  Stocks    Stocks[]
+  Orders    Orders[]
+}
+
+model Shops {
+  id        Int      @id               @default( autoincrement() )
+  createdAt DateTime @default( now() ) @map( "created_at" )
+  updatedAt DateTime @updatedAt        @map( "updated_at" )
+
+  name      String
+
+  Stocks    Stocks[]
+  Orders    Orders[]
+}
+
+model Stocks {
+  id              Int      @id               @default( autoincrement() )
+  createdAt       DateTime @default( now() ) @map("created_at")
+  updatedAt       DateTime @updatedAt        @map("updated_at")
+
+  quantityOnShelf Int
+
+  productId       Int      @unique @map( "user_id" ) 
+  Products        Products @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  shopId          Int      @unique @map( "shop_id" )
+  Shops           Shops    @relation(fields: [shopId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Orders {
+  id              Int      @id               @default( autoincrement() )
+  createdAt       DateTime @default( now() ) @map("created_at")
+  updatedAt       DateTime @updatedAt        @map("updated_at")
+
+  quantityInOrder Int
+
+  productId       Int      @unique @map( "user_id" ) 
+  Products        Products @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  shopId          Int      @unique @map( "shop_id" )
+  Shops           Shops    @relation(fields: [shopId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}

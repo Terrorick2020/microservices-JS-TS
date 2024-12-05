@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=shop
+    networks:
+      - planner_network
+    ports:
+      - 5432:5432
+
+  rest-products:
+    build: ./rest-products.service
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/shop
+      - HOST=0.0.0.0
+    depends_on:
+      - db
+    networks:
+      - planner_network
+    ports:
+      - 3000:3000
+    
+  history-products:
+    build: ./history-products.service
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/shop
+      - HOST=0.0.0.0
+    depends_on:
+      - db
+    networks:
+      - planner_network
+    ports:
+      - 4000:4000
+
+  proxy:
+    build: ./nginx
+    depends_on:
+      - rest-products
+      - history-products
+    networks:
+      - planner_network
+    ports:
+      - 80:80
+
+networks:
+  planner_network:
+    driver: bridge
